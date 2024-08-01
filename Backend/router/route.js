@@ -1,7 +1,12 @@
 const express = require('express')
 const route = express.Router()
+const userController = require('../controller/userController')
+const authMiddleWare = require('../middleware/authMiddleware')
 
-route.post('/signUp')
-route.post('/login')
+
+route.post('/signUp',userController.signUp)
+route.post('/login',userController.login)
 route.post('/logout')
-route.post('/dashBoard')
+route.get('/dashBoard',authMiddleWare,userController.dashBoard)
+
+module.exports = route

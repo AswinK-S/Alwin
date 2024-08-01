@@ -16,6 +16,14 @@ const userSchema = mongoose.Schema({
     referral:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Referral'
+    },
+    level: {
+        type:Number,
+        default:1
+    },
+    earnings:{
+        type:Number,
+        default:0
     }
 
 })
