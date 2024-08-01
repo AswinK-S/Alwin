@@ -11,9 +11,7 @@ const generateToken = (id,role)=>{
 //signUp
 const signUp = async(req,res)=>{
     try {
-        console.log('req.bdy',req.body);
         const {name,email,password,referral} = req.body
-        console.log('name',name,'email',email,'pass',password);
         const hashedPassword = await bcrypt.hash(password,10)
         const user = await new User({name,email,password:hashedPassword})
 
