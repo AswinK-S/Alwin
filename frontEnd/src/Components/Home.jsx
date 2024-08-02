@@ -1,8 +1,10 @@
 import { useState } from "react"
 import SignUp from "./SignUp"
 import Navbar from "./NavBar"
+import propTypes from 'prop-types'
 
-const HomePage = () => {
+const HomePage = ({refreshAuthStatus}) => {
+
     const [toggle, setToggle] = useState(false)
     const handleClick = () => {
         setToggle(!toggle)
@@ -12,7 +14,7 @@ const HomePage = () => {
         <>
 
             <div className="h-[100vh]">
-                <Navbar />
+                <Navbar  refreshAuthStatus={refreshAuthStatus}/>
                 <div className=" flex justify-center items-center h-[90vh] ">
                     {toggle ? (
                         <div className="w-full max-w-md">
@@ -28,6 +30,10 @@ const HomePage = () => {
             </div>
         </>
     )
+}
+
+HomePage.propTypes ={
+    refreshAuthStatus:propTypes.func.isRequired
 }
 
 export default HomePage

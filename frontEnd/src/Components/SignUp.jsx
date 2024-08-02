@@ -74,7 +74,6 @@ const SignUp = () => {
             e.preventDefault()
             if (validateForm()) {
                 const res = await axiosApi.post('/signUp',formData)
-                console.log('signup', res);
                 if(res.status===201){
                     navigate('/login')
                 }

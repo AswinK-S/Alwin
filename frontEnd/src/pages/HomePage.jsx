@@ -1,11 +1,16 @@
 import HomePage from "../Components/Home"
+import propTypes from  'prop-types'
 
-const SignUp = ()=>{
+const SignUp = ({refreshAuthStatus})=>{
     return(
         <>
-            <HomePage/>
+            <HomePage refreshAuthStatus={refreshAuthStatus}/>
         </>
     )
+}
+
+SignUp.propTypes ={
+    refreshAuthStatus:propTypes.func.isRequired
 }
 
 export default SignUp

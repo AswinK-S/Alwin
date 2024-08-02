@@ -1,12 +1,33 @@
-import  { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { userLogOut } from '../store/slice';
+import axiosApi from '../service/axiosApi';
+import propTypes from 'prop-types'
 
-const Navbar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+const Navbar = ({refreshAuthStatus}) => {
+ 
+  const user = useSelector(state =>state.user.user)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
-  const handleAuth = () => {
-    setIsLoggedIn(!isLoggedIn);
-  };
+  const handleAuth =async()=>{
+    try {
+
+      if(user){
+        await axiosApi.get('/logout')
+        dispatch(userLogOut())
+        refreshAuthStatus()
+        navigate('/')
+      }else{
+        navigate('/login')
+      }
+
+    } catch (error) {
+      console.error('Logout failed', error);
+    }
+     
+  }
 
   return (
     <nav className="shadow-md p-4">
@@ -15,7 +36,7 @@ const Navbar = () => {
           Alwin
         </Link>
         <div className="flex items-center">
-          {isLoggedIn && (
+          {user && (
             <Link to="/dashboard" className="text-white mr-4 hover:text-gray-300">
               Dashboard
             </Link>
@@ -24,12 +45,16 @@ const Navbar = () => {
             onClick={handleAuth}
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
           >
-            {isLoggedIn ? 'Logout' : 'Login'}
+            {user ? 'Logout' : 'Login'}
           </button>
         </div>
       </div>
     </nav>
   );
 };
+
+Navbar.propTypes ={
+  refreshAuthStatus:propTypes.func.isRequired
+}
 
 export default Navbar;

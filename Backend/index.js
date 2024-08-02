@@ -3,12 +3,14 @@ const app = express()
 const connectDB = require('./config/database')
 const userRoute = require('./router/route')
 const cors = require('cors')
+const cookieParser = require('cookie-parser')
 
 
 const port = 4000
 
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
+app.use(cookieParser())
 
 app.use(cors({
     origin:'http://localhost:5173',

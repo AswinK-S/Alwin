@@ -1,8 +1,12 @@
 import axiosApi from "../service/axiosApi";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { userLogIn } from "../store/slice";
+import propTypes from 'prop-types'
 
-const Login = () => {
+const Login = ({refreshAuthStatus }) => {
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -10,7 +14,9 @@ const Login = () => {
     })
 
     const [errors, setErrors] = useState({})
-
+    const [loginError,setLoginError] =useState('')
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
 
     const validateField = (name, value) => {
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
@@ -60,10 +66,20 @@ const handleSubmit = async (e) => {
         e.preventDefault()
         if (validateForm()) {
             const res = await axiosApi.post('/login',formData)
-            
+            if(res?.status ===200){
+                dispatch(userLogIn(res.data))
+                refreshAuthStatus()
+                navigate('/dashBoard')
+            }
         }
     } catch (error) {
-        console.log(error.message);
+        console.log(error.response);
+        if(error?.response?.data?.message ==='user does not exist'){
+            setLoginError('user does not exist!')
+        }
+        if(error?.response?.data?.message === 'invalid credentials'){
+            setLoginError('invalid credentials')
+        }
     }
 }
 
@@ -111,6 +127,8 @@ return (
                     >
                         Login
                     </button>
+                    {loginError && <span className="text-red-500 text-sm mt-1">{loginError}</span>}
+
                     <p className=" text-sm bg-transparent font-normal text-center text-gray-700">
                     {" "}
                    Don't have an account?{" "}
@@ -122,6 +140,10 @@ return (
         </div>
     </>
 )
+}
+
+Login.propTypes ={
+    refreshAuthStatus : propTypes.func.isRequired
 }
 
 export default Login;

@@ -6,7 +6,8 @@ const authMiddleWare = require('../middleware/authMiddleware')
 
 route.post('/signUp',userController.signUp)
 route.post('/login',userController.login)
-route.post('/logout')
+route.get('/logout',userController.logOut)
+route.get('/authCheck',authMiddleWare,userController.authCheck)
 route.get('/dashBoard',authMiddleWare,userController.dashBoard)
 
 module.exports = route
