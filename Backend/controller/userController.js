@@ -1,5 +1,5 @@
 const User = require('../model/user')
-const Reward =require ('../model/reward.js')
+const Reward = require('../model/reward.js')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
@@ -9,18 +9,45 @@ const generateToken = (id, role) => {
     return jwt.sign({ id, role }, 'secretKeyOfJwt', { expiresIn: '1d' })
 }
 
+// update the earnings of the referrar 
+const updateReferrerEarnings = async (user, amount) => {
+    const referralLevels = [10, 8, 5];
+    let currentUser = user;
+    for (let level = 1; level <= 3; level++) {
+        if (!currentUser.referrar) break;
+        const referrer = await User.findById(currentUser.referrar);
+        if (!referrer) break;
+
+        const commission = (referralLevels[level - 1] / 100) * amount;
+        referrer.earnings += commission;
+        referrer.referralEarnings += commission
+
+        await referrer.save();
+        currentUser = referrer;
+    }
+};
+
 //signUp
 const signUp = async (req, res) => {
     try {
         const { name, email, password, referral } = req.body
         const hashedPassword = await bcrypt.hash(password, 10)
         const user = await new User({ name, email, password: hashedPassword })
+        console.log('refer555', referral);
 
         if (referral) {
             const referrer = await User.findById(referral)
+            console.log('referrer 000', referrer);
+
             if (referrer) {
-                user.referral = referral;
-                user.level = referrer.level + 1;
+                console.log('referrer', referrer);
+                user.referrar = referral;
+                user.level = (referrer.level || 0) + 1;
+                await updateReferrerEarnings(user, 1000);
+
+                // Update the referrer's referrals array to track the referrals
+                referrer.referrals.push(user._id);
+                await referrer.save();
             }
 
         }
@@ -46,16 +73,14 @@ const login = async (req, res) => {
             res.status(401).json({ message: 'user does not exist' })
         }
         const isPasswordMatch = await bcrypt.compare(password, user?.password)
-        console.log('password match', isPasswordMatch);
-
         if (!isPasswordMatch) {
             res.status(401).json({ message: 'invalid credentials' })
-        }else{
+        } else {
             const token = generateToken(user._id, 'user')
-            await res.cookie('token',token,{
-                httpOnly:true,
-                secure:process.env.NODE_ENV === 'production',
-                maxAge: 24 * 60 * 60 * 1000 
+            await res.cookie('token', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 24 * 60 * 60 * 1000
             })
 
             res.status(200).json({
@@ -63,7 +88,10 @@ const login = async (req, res) => {
                 email: user.email,
                 name: user.name,
                 level: user.level,
-                earnings: user.earnings
+                earnings: user.earnings,
+                referralEarnings: user.referralEarnings
+
+
             })
 
 
@@ -98,12 +126,12 @@ const authCheck = async (req, res) => {
 };
 
 //logout
-const logOut = async(req,res)=>{
+const logOut = async (req, res) => {
     try {
         res.clearCookie('token')
         res.status(200).json({ message: 'Logged out successfully' });
     } catch (error) {
-      console.log(error);  
+        console.log(error);
     }
 }
 

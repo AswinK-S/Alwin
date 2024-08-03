@@ -13,10 +13,12 @@ const userSchema = mongoose.Schema({
         type:String,
         required:true
     },
-    referral:{
+    referrar:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'Referral'
+        ref:'User'
     },
+    referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+
     level: {
         type:Number,
         default:1
@@ -24,7 +26,11 @@ const userSchema = mongoose.Schema({
     earnings:{
         type:Number,
         default:0
-    }
+    },
+    referralEarnings:{
+         type: Number, 
+         default: 0 
+    },
 
 })
 

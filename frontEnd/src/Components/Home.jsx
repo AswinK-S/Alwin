@@ -3,7 +3,7 @@ import SignUp from "./SignUp"
 import Navbar from "./NavBar"
 import propTypes from 'prop-types'
 
-const HomePage = ({refreshAuthStatus}) => {
+const HomePage = ({ refreshAuthStatus }) => {
 
     const [toggle, setToggle] = useState(false)
     const handleClick = () => {
@@ -14,15 +14,16 @@ const HomePage = ({refreshAuthStatus}) => {
         <>
 
             <div className="h-[100vh]">
-                <Navbar  refreshAuthStatus={refreshAuthStatus}/>
+                <Navbar refreshAuthStatus={refreshAuthStatus} />
                 <div className=" flex justify-center items-center h-[90vh] ">
                     {toggle ? (
                         <div className="w-full max-w-md">
                             <SignUp />
                         </div>
                     ) : (
-                        <span className="border shadow-md    p-20 rounded-md cursor-pointer" onClick={handleClick}>
+                        <span className="border shadow-md flex flex-col items-center   p-20 rounded-md cursor-pointer" onClick={handleClick}>
                             <h1 className="text-sky-400 text-2xl font-bold">WELCOME</h1>
+                            <h3 className="text-sky-400">click me!</h3>
                         </span>
                     )}
                 </div>
@@ -32,8 +33,8 @@ const HomePage = ({refreshAuthStatus}) => {
     )
 }
 
-HomePage.propTypes ={
-    refreshAuthStatus:propTypes.func.isRequired
+HomePage.propTypes = {
+    refreshAuthStatus: propTypes.func.isRequired
 }
 
 export default HomePage

@@ -5,28 +5,28 @@ import { userLogOut } from '../store/slice';
 import axiosApi from '../service/axiosApi';
 import propTypes from 'prop-types'
 
-const Navbar = ({refreshAuthStatus}) => {
- 
-  const user = useSelector(state =>state.user.user)
+const Navbar = ({ refreshAuthStatus }) => {
+
+  const user = useSelector(state => state.user.user)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const handleAuth =async()=>{
+  const handleAuth = async () => {
     try {
 
-      if(user){
+      if (user) {
         await axiosApi.get('/logout')
         dispatch(userLogOut())
         refreshAuthStatus()
         navigate('/')
-      }else{
+      } else {
         navigate('/login')
       }
 
     } catch (error) {
       console.error('Logout failed', error);
     }
-     
+
   }
 
   return (
@@ -53,8 +53,8 @@ const Navbar = ({refreshAuthStatus}) => {
   );
 };
 
-Navbar.propTypes ={
-  refreshAuthStatus:propTypes.func.isRequired
+Navbar.propTypes = {
+  refreshAuthStatus: propTypes.func.isRequired
 }
 
 export default Navbar;

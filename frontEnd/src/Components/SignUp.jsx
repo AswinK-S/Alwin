@@ -1,6 +1,6 @@
 import axiosApi from "../service/axiosApi";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
@@ -11,6 +11,19 @@ const SignUp = () => {
         password: '',
         cPassword: ''
     })
+
+    const location = useLocation();
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        const referralId = searchParams.get('ref');
+
+        setFormData(prev => ({
+            ...prev,
+            referral: referralId
+        }))
+        console.log('rr', referralId);
+    }, [setFormData, location])
+
 
     const [errors, setErrors] = useState({})
     const navigate = useNavigate()
@@ -73,8 +86,9 @@ const SignUp = () => {
         try {
             e.preventDefault()
             if (validateForm()) {
-                const res = await axiosApi.post('/signUp',formData)
-                if(res.status===201){
+
+                const res = await axiosApi.post('/signUp', formData)
+                if (res.status === 201) {
                     navigate('/login')
                 }
             }
@@ -85,9 +99,9 @@ const SignUp = () => {
 
     return (
         <>
-            <div className="flex justify-center items-center">
+            <div className="flex justify-center items-center ">
                 <form onSubmit={handleSubmit} className="w-full max-w-md">
-                    <div className="border shadow-md rounded-md py-10 px-6 flex flex-col gap-5">
+                    <div className="border  shadow-md rounded-md py-10 px-6 flex flex-col gap-5">
                         <div className="flex justify-center">
                             <h1 className="font-bold text-lg">SignUp</h1>
                         </div>

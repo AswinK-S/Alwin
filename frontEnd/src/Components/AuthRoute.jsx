@@ -9,7 +9,7 @@ import axiosApi from "../service/axiosApi"
 const AuthRoute = ({ children, requireAuth, refreshAuthStatus }) => {
     const [authStatus, setAuthStatus] = useState('checking');
     const navigate = useNavigate()
-    
+
     useEffect(() => {
         const checkAuthStatus = async () => {
             try {
